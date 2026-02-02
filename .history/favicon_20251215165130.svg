@@ -1,0 +1,8 @@
+<!-- public/favicon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="6" y1="11" x2="10" y2="11"></line>
+  <line x1="8" y1="9" x2="8" y2="13"></line>
+  <line x1="15" y1="12" x2="15.01" y2="12"></line>
+  <line x1="18" y1="10" x2="18.01" y2="10"></line>
+  <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.003.052-.003.097-.003.142v7.58c0 1.392 1.124 2.52 2.516 2.52h11.564c1.392 0 2.516-1.128 2.516-2.52v-7.58c0-.045 0-.09-.003-.142A4 4 0 0 0 17.32 5Z"></path>
+</svg>

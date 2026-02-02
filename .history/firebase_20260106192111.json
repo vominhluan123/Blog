@@ -1,0 +1,11 @@
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": ["**/node_modules", "**/.git/**"],
+      "predeploy": ["npm --prefix functions run build"]
+    }
+  ]
+  // Không cần phần "database" nữa vì bạn không dùng Realtime DB
+}

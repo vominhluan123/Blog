@@ -1,0 +1,20 @@
+import { useAuth } from "@/contexts/useAuth"
+import FullScreenSpinner from "../loading-button/FullScreenSpinner"
+import { Navigate } from "react-router"
+
+// VerifiedRoute.tsx  ← Bắt buộc login + verify email
+export const VerifiedRoute = () => {
+  const { user, loading } = useAuth()
+  cosnt navigate = useNa
+  if (loading) return <FullScreenSpinner />
+
+  if (!user) {
+    return <Navigate to='/login' replace />
+  }
+
+  if (!user.emailVerified) {
+    return <Navigate to='/verify-email' replace />
+  }
+
+  return <Outlet />
+}

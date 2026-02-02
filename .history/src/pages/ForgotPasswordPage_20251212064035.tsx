@@ -1,0 +1,71 @@
+import type Spinner from '@/components/loading-button/Spinner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { auth } from '@/firebase/firebase-config'
+import { useTitle } from '@/hooks/useTitle'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { sendPasswordResetEmail } from 'firebase/auth'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import * as z from 'zod'
+
+const schema = z.object({
+  email: z.string().email('Email không hợp lệ')
+})
+
+export default function ForgotPasswordPage() {
+  useTitle('Quên mật khẩu')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<{ email: string }>({
+    resolver: zodResolver(schema)
+  })
+
+  const onSubmit = async ({ email }: { email: string }) => {
+    try {
+      await sendPasswordResetEmail(auth, email)
+      toast.success('Đã gửi email khôi phục mật khẩu! Kiểm tra hộp thư của bạn.')
+    } catch (err: any) {
+      if (err?.code === 'auth/user-not-found') {
+        return toast.error('Email không tồn tại')
+      }
+      console.error('forgot password error', err)
+      toast.error('Không thể gửi email. Hãy thử lại.')
+    }
+  }
+
+  return (
+    <div className='max-w-sm mx-auto mt-10'>
+      <h2 className='text-xl font-semibold mb-4'>Quên mật khẩu</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        <div className='flex flex-col w-full max-w-sm items-start gap-3  mb-5'>
+          <Label htmlFor='email'>Email</Label>
+          <Input
+            type='email'
+            id='email'
+            placeholder='email@gmail.com'
+            {...register('email')}
+            className={cn(errors.email && 'border-red-500 focus-visible:ring-red-500')}
+          />
+          {errors.email && <p className='text-red-500 text-sm'>{errors.email.message}</p>}
+        </div>
+
+        <Button
+          size={'lg'}
+          className={`w-full cursor-pointer flex font-semibold items-center justify-center  ${
+            isSubmitting ? ' cursor-not-allowed' : ' text-white cursor-pointer'
+          }`}
+          type='submit'
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <Spinner : 'Gửi email khôi phục'}
+        </Button>
+      </form>
+    </div>
+  )
+}

@@ -1,0 +1,55 @@
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { toast } from 'sonner'
+import * as z from 'zod'
+import { sendPasswordResetEmail } from 'firebase/auth'
+import { auth } from '@/firebase/firebase-config'
+
+const schema = z.object({
+  email: z.string().email('Email không hợp lệ')
+})
+
+export default function ForgotPasswordPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(schema)
+  })
+
+  const onSubmit = async ({ email }) => {
+    try {
+      await sendPasswordResetEmail(auth, email)
+      toast.success('Đã gửi email khôi phục mật khẩu! Kiểm tra hộp thư của bạn.')
+    } catch (err) {
+      toast.error('Không thể gửi email. Hãy thử lại.')
+    }
+  }
+
+  return (
+    <div className='max-w-sm mx-auto mt-10'>
+      <h2 className='text-xl font-semibold mb-4'>Quên mật khẩu</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        <div>
+          <Label>Email</Label>
+          <Input
+            type='email'
+            placeholder='email@gmail.com'
+            {...register('email')}
+            className={errors.email ? 'border-red-500' : ''}
+          />
+          {errors.email && <p className='text-red-500 text-sm'>{errors.email.message}</p>}
+        </div>
+
+        <Button type='submit' disabled={isSubmitting} className='w-full'>
+          {isSubmitting ? 'Đang gửi...' : 'Gửi email khôi phục'}
+        </Button>
+      </form>
+    </div>
+  )
+}

@@ -1,0 +1,30 @@
+import { useAuth } from '@/contexts/useAuth'
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { addDoc, collection } from 'firebase/firestore'
+import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
+import { auth, db } from './firebase-config'
+
+const provider = new GoogleAuthProvider()
+provider.setCustomParameters({
+  prompt: 'select_account' // luôn hỏi chọn lại tài khoản
+})
+export function useGoogleLogin() {
+  const { setUser } = useAuth()
+  const navigate = useNavigate()
+
+  const loginWithGoogle = async () => {
+    const result = await signInWithPopup(auth, provider)
+    // lấy user từ google
+    const user = result.user
+    // lưu vào context
+    setUser(user)
+    // Dùng uid làm document ID (chung collection users)
+    const userRef = doc(db, 'users', user.uid)
+
+    toast.success('Đăng nhập thành công')
+    setTimeout(() => navigate('/'), 800)
+  }
+
+  return { loginWithGoogle }
+}
